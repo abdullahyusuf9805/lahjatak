@@ -1,13 +1,19 @@
-import itertools
-import pandas as pd
-import re
-import csv
-import json
-import time
+import os
+import streamlit as st
 from google import genai
-from camel_tools.morphology.database import MorphologyDB
-from camel_tools.morphology.analyzer import Analyzer
-import config
+
+# جلب مفتاح API بأمان من متغيرات البيئة في Streamlit Secrets أو GitHub Secrets
+api_key = os.getenv("GEMINI_API_KEY")
+
+if not api_key:
+    # محاولة جلبه من st.secrets كخيار احتياطي لمنصة Streamlit Cloud
+    try:
+        api_key = st.secrets["GEMINI_API_KEY"]
+    except:
+        raise ValueError("GEMINI_API_KEY is not set in the environment variables.")
+
+# تهيئة عميل الذكاء الاصطناعي
+client = genai.Client(api_key=api_key)
 
 # تهيئة قاعدة البيانات والتحليل الصرفي مرة واحدة في الذاكرة
 print("Loading Morphology DB...")
