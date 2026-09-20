@@ -2,23 +2,34 @@ import os
 import streamlit as st
 from google import genai
 
-# جلب مفتاح API بأمان من متغيرات البيئة في Streamlit Secrets أو GitHub Secrets
+# جلب مفتاح API بأمان من متغيرات البيئة أو Streamlit Secrets
 api_key = os.getenv("GEMINI_API_KEY")
-
 if not api_key:
-    # محاولة جلبه من st.secrets كخيار احتياطي لمنصة Streamlit Cloud
     try:
         api_key = st.secrets["GEMINI_API_KEY"]
     except:
         raise ValueError("GEMINI_API_KEY is not set in the environment variables.")
 
-# تهيئة عميل الذكاء الاصطناعي
 client = genai.Client(api_key=api_key)
 
-# تهيئة قاعدة البيانات والتحليل الصرفي مرة واحدة في الذاكرة
+# تهيئة قواعد بيانات Camel Tools بطريقة آمنة تلائم السحابة
 print("Loading Morphology DB...")
-_db = MorphologyDB.builtin_db()
-_analyzer = Analyzer(_db)
+try:
+    from camel_tools.morphology.database import MorphologyDB
+    from camel_tools.morphology.analyzer import Analyzer
+    
+    # محاولة جلب القاعدة الافتراضية
+    try:
+        _db = MorphologyDB.builtin_db()
+    except Exception:
+        # إذا لم تكن مثبتة، قم بتثبيتها برمجياً في البيئة السحابية
+        os.system("camel_data -y install morphology-db-msa-r13")
+        _db = MorphologyDB.builtin_db()
+        
+    _analyzer = Analyzer(_db)
+except Exception as e:
+    print(f"Warning: Morphology DB could not be loaded: {e}")
+    _analyzer = None
 
 # تهيئة عميل الذكاء الاصطناعي
 client = genai.Client(api_key=config.GEMINI_API_KEY)
