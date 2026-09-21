@@ -1,5 +1,8 @@
 import os
 import subprocess
+import streamlit as st
+
+@st.cache_resource
 
 def setup_camel_tools():
     try:
@@ -16,7 +19,6 @@ def setup_camel_tools():
 
 setup_camel_tools()
 
-import streamlit as st
 import nlp_engine
 import pandas as pd
 import re
