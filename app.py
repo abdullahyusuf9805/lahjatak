@@ -44,6 +44,20 @@ lexicon_df = load_data()
 
 st.set_page_config(page_title="برنامج لهجتك", layout="centered", page_icon="icon.png", initial_sidebar_state="collapsed")
 
+hide_st_style = """
+            <style>
+            /* إخفاء الشريط العلوي بالكامل (GitHub, Share...) */
+            header {visibility: hidden;}
+            
+            /* إخفاء الفوتر الافتراضي */
+            footer {visibility: hidden;}
+            
+            /* إخفاء أيقونة الرابط 🔗 بجانب العناوين */
+            a.header-anchor {display: none !important;}
+            </style>
+            """
+st.markdown(hide_st_style, unsafe_allow_html=True)
+
 st.markdown(f"""
     <style>
     /* =========================================
