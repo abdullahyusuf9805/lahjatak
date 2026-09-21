@@ -1,3 +1,21 @@
+import os
+import subprocess
+
+def setup_camel_tools():
+    try:
+        from camel_tools.morphology.database import MorphologyDB
+        _ = MorphologyDB.builtin_db()
+        print("Camel tools data already installed.")
+    except Exception:
+        print("Camel tools data missing. Downloading now...")
+        try:
+            subprocess.run(['camel_data', '-i', 'morphology-db-msa-r13'], check=True)
+            print("Download complete.")
+        except subprocess.CalledProcessError as e:
+            print(f"Failed to download camel data: {e}")
+
+setup_camel_tools()
+
 import streamlit as st
 import nlp_engine
 import pandas as pd
