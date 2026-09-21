@@ -98,7 +98,7 @@ st.markdown(f"""
         margin-right: 5px !important; 
         margin-bottom: 20px !important; 
         font-weight: 700;
-        color: 272730;
+        color: #272730 !important;
     }}
 
     h3 {{
