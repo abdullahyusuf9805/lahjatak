@@ -44,6 +44,7 @@ lexicon_df = load_data()
 
 st.set_page_config(page_title="برنامج لهجتك", layout="centered", page_icon="icon.png", initial_sidebar_state="collapsed")
 
+# إخفاء عناصر Streamlit الافتراضية (الشريط العلوي، الفوتر، وعلامات الربط)
 hide_st_style = """
             <style>
             /* إخفاء الشريط العلوي بالكامل (GitHub, Share...) */
@@ -52,8 +53,16 @@ hide_st_style = """
             /* إخفاء الفوتر الافتراضي */
             footer {visibility: hidden;}
             
-            /* إخفاء أيقونة الرابط 🔗 بجانب العناوين */
-            a.header-anchor {display: none !important;}
+            /* إخفاء أيقونة الرابط 🔗 بجانب العناوين (طريقة شاملة وصارمة) */
+            h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+                display: none !important;
+                pointer-events: none !important;
+            }
+            
+            /* استهداف حاوية الأيقونة في الإصدارات الحديثة من Streamlit */
+            [data-testid="StyledLinkIconContainer"] {
+                display: none !important;
+            }
             </style>
             """
 st.markdown(hide_st_style, unsafe_allow_html=True)
