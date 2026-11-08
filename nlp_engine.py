@@ -4,23 +4,41 @@ import re
 import csv
 import json
 import time
-import streamlit as st # 👈 أضفنا هذه لقراءة الأسرار
+import os
+import streamlit as st
 from google import genai
 from camel_tools.morphology.database import MorphologyDB
 from camel_tools.morphology.analyzer import Analyzer
 
-# 👈 لاحظ أننا حذفنا (import config) تماماً
+# =====================================================================
+# تهيئة الموارد وقواعد البيانات (تعمل مرة واحدة فقط وتُخزن في الذاكرة)
+# =====================================================================
 
-# تهيئة قاعدة البيانات مرة واحدة في الذاكرة لتسريع المعالجة
-print("Loading Morphology DB...")
-_db = MorphologyDB.builtin_db()
-_analyzer = Analyzer(_db)
+@st.cache_resource
+def init_morphology_db():
+    print("Loading Morphology DB from Cache...")
+    # هذه الدالة تتوقع أن الـ DB تم تحميله مسبقاً في app.py
+    return MorphologyDB.builtin_db()
 
-# 👈 جلب المفتاح من إعدادات Streamlit Secrets الآمنة
+@st.cache_resource
+def init_analyzer(_db):
+    print("Initializing Analyzer from Cache...")
+    return Analyzer(_db)
+
+# استدعاء الموارد الثقيلة من الذاكرة المخبئية
+_db = init_morphology_db()
+_analyzer = init_analyzer(_db)
+
+# جلب المفتاح من إعدادات Streamlit Secrets الآمنة
 client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
 
+# =====================================================================
+# تحميل القاموس (يعمل مرة واحدة فقط ويُخزن في الذاكرة كبيانات)
+# =====================================================================
+
+@st.cache_data
 def load_lexicon():
-    print("Loading MADAR dataset...")
+    print("Loading MADAR dataset from Cache...")
     df = pd.read_csv(
         'data/MADAR_Lexicon_Saudi.tsv', 
         sep='\t', 
